@@ -1,1 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>NEXUS // VISIBILITY_FIX</title>
+    <style>
+      body {
+        margin: 0;
+        /* Subtle gradient so the object isn't floating in pure black */
+        background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+        overflow: hidden;
+        color: #00ffcc;
+        font-family: monospace;
+      }
+      .hud {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 10;
+        border-left: 2px solid #00ffcc;
+        padding-left: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="canvas-container"></div>
+    <div class="hud">
+      <h1>VISIBILITY_BOOST_v2</h1>
+      <div id="status">CONTRAST: OPTIMIZED</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000,
+      );
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // --- 1. THE "POP" LIGHTING ---
+      // Ambient light (base visibility) - turned up
+      scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+
+      // Key light (creates shadows/depth)
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+      keyLight.position.set(5, 5, 5);
+      scene.add(keyLight);
+
+      // Rim Light (puts a bright glow on the edges so it stands out from the black)
+      const rimLight = new THREE.PointLight(0x00ffff, 2, 50);
+      rimLight.position.set(-5, -5, -2);
+      scene.add(rimLight);
+
+      const loader = new THREE.TextureLoader();
+
+      // Using a high-contrast crate texture for the demo
+      loader.load("https://threejs.org/examples/textures/crate.gif", (tex) => {
+        const geometry = new THREE.BoxGeometry(2, 2, 2);
+        const material = new THREE.MeshStandardMaterial({
+          map: tex,
+          roughness: 0.1,
+          metalness: 0.5,
+        });
+
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        function animate() {
+          requestAnimationFrame(animate);
+          cube.rotation.x += 0.005;
+          cube.rotation.y += 0.01;
+          renderer.render(scene, camera);
+        }
+        animate();
+      });
+
+      camera.position.z = 5;
+    </script>
+  </body>
+</html>
 
