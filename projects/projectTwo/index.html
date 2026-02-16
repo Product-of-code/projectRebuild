@@ -1,1 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>High-Tech Projectile Simulation</title>
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+        overflow: hidden;
+        font-family: "Courier New", monospace;
+      }
+      #hud {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        color: #00f2ff;
+        text-shadow: 0 0 10px #00f2ff;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="hud">
+      >> VELOCITY: MACH 12<br />
+      >> TARGET: LOCKED<br />
+      >> ENGINE: OVERLOAD
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+      const scene = new THREE.Scene();
+      // 3-Point Perspective: Wide FOV and tilted position
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000,
+      );
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // --- 1. THE PROJECTILE (The Dummy) ---
+      const projectileGroup = new THREE.Group();
+
+      // Main Body
+      const bodyGeom = new THREE.CylinderGeometry(0.2, 0.4, 3, 12);
+      const bodyMat = new THREE.MeshPhongMaterial({
+        color: 0x222222,
+        shininess: 100,
+      });
+      const body = new THREE.Mesh(bodyGeom, bodyMat);
+      body.rotation.x = Math.PI / 2;
+      projectileGroup.add(body);
+
+      // Glow Core
+      const coreGeom = new THREE.CylinderGeometry(0.21, 0.21, 1.5, 12);
+      const coreMat = new THREE.MeshBasicMaterial({
+        color: 0x00f2ff,
+        wireframe: true,
+      });
+      const core = new THREE.Mesh(coreGeom, coreMat);
+      core.rotation.x = Math.PI / 2;
+      projectileGroup.add(core);
+
+      // Fins
+      const finGeom = new THREE.BoxGeometry(1.2, 0.1, 0.5);
+      const finMat = new THREE.MeshPhongMaterial({ color: 0x444444 });
+      for (let i = 0; i < 3; i++) {
+        const fin = new THREE.Mesh(finGeom, finMat);
+        fin.rotation.z = ((Math.PI * 2) / 3) * i;
+        projectileGroup.add(fin);
+      }
+
+      scene.add(projectileGroup);
+
+      // --- 2. THE WARP TUNNEL (The Environment) ---
+      const lineCount = 200;
+      const lineGeometry = new THREE.BufferGeometry();
+      const linePoints = [];
+      for (let i = 0; i < lineCount; i++) {
+        const z = Math.random() * -100;
+        const x = (Math.random() - 0.5) * 40;
+        const y = (Math.random() - 0.5) * 40;
+        linePoints.push(x, y, z, x, y, z + 5);
+      }
+      lineGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(linePoints, 3),
+      );
+      const lineMat = new THREE.LineBasicMaterial({
+        color: 0x00f2ff,
+        transparent: true,
+        opacity: 0.3,
+      });
+      const lines = new THREE.LineSegments(lineGeometry, lineMat);
+      scene.add(lines);
+
+      // Lighting
+      const light = new THREE.PointLight(0x00f2ff, 2, 50);
+      light.position.set(2, 2, 5);
+      scene.add(light);
+      scene.add(new THREE.AmbientLight(0x111111));
+
+      // --- 3. CAMERA PLACEMENT (3-Point Perspective) ---
+      camera.position.set(3, 2, 6);
+      camera.lookAt(0, 0, 0);
+
+      // --- 4. THE INFINITE LOOP ---
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const time = Date.now() * 0.005;
+
+        // Projectile vibration (Machine feel)
+        projectileGroup.position.y = Math.sin(time * 10) * 0.02;
+        projectileGroup.rotation.z += 0.01;
+
+        // Warp Speed Effect: Loop the lines forever
+        const positions = lineGeometry.attributes.position.array;
+        for (let i = 0; i < positions.length; i += 3) {
+          positions[i + 2] += 1.5; // Move lines toward camera
+          if (positions[i + 2] > 10) positions[i + 2] = -90; // Infinite Reset
+        }
+        lineGeometry.attributes.position.needsUpdate = true;
+
+        // Dynamic Mouse Tilt
+        camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
+        camera.position.y += (mouseY * 5 - camera.position.y) * 0.05;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+
+      let mouseX = 0,
+        mouseY = 0;
+      window.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX / window.innerWidth - 0.5;
+        mouseY = e.clientY / window.innerHeight - 0.5;
+      });
+
+      animate();
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    </script>
+  </body>
+</html>
 
