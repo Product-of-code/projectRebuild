@@ -148,6 +148,48 @@
         transform: scale(1.1);
         box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
       }
+      /* === Contact Form === */
+      .contact-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .glass-form {
+        background: rgba(0, 246, 255, 0.03);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 246, 255, 0.2);
+        padding: 40px;
+        border-radius: 25px;
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .glass-form input,
+      .glass-form textarea {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(0, 246, 255, 0.2);
+        padding: 18px;
+        color: white;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: 0.3s;
+      }
+      .glass-form input:focus,
+      .glass-form textarea:focus {
+        outline: none;
+        border-color: #00f6ff;
+        box-shadow: 0 0 15px rgba(0, 246, 255, 0.3);
+      }
+      footer {
+        text-align: center;
+        padding: 60px;
+        color: #446688;
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+      }
     </style>
   </head>
   <body>
@@ -220,56 +262,35 @@
       <section id="about">
         <h2>Technical Specs</h2>
         <div
-          style="
-            max-width: 600px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            font-family: &quot;Orbitron&quot;;
-            color: #00f6ff;
-            text-align: center;
-          "
+          style="max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-family: 'Orbitron'; color: #00f6ff; text-align: center;"
         >
-          <div
-            style="
-              border: 1px solid #00f6ff33;
-              padding: 15px;
-              border-radius: 10px;
-            "
+          <div style="border: 1px solid #00f6ff33; padding: 15px; border-radius: 10px;">V8 Optimization</div>
+          <div style="border: 1px solid #00f6ff33; padding: 15px; border-radius: 10px;">WebAssembly Core</div>
+          <div style="border: 1px solid #00f6ff33; padding: 15px; border-radius: 10px;">P2P Networking</div>
+          <div style="border: 1px solid #00f6ff33; padding: 15px; border-radius: 10px;">GPU Rendering</div>
+        </div>
+      </section>
+
+      <!-- Establish Connection Section -->
+      <section id="contact">
+        <h2>Establish Connection</h2>
+        <div class="contact-container">
+          <form
+            class="glass-form"
+            onsubmit="event.preventDefault(); alert('Signal Sent!');"
           >
-            V8 Optimization
-          </div>
-          <div
-            style="
-              border: 1px solid #00f6ff33;
-              padding: 15px;
-              border-radius: 10px;
-            "
-          >
-            WebAssembly Core
-          </div>
-          <div
-            style="
-              border: 1px solid #00f6ff33;
-              padding: 15px;
-              border-radius: 10px;
-            "
-          >
-            P2P Networking
-          </div>
-          <div
-            style="
-              border: 1px solid #00f6ff33;
-              padding: 15px;
-              border-radius: 10px;
-            "
-          >
-            GPU Rendering
-          </div>
+            <input type="text" placeholder="IDENTITY (NAME)" required />
+            <input type="email" placeholder="COMMS LINK (EMAIL)" required />
+            <textarea placeholder="SECURE MESSAGE" rows="5" required></textarea>
+            <button type="submit">SEND SIGNAL</button>
+          </form>
         </div>
       </section>
     </main>
+
+    <footer>
+      &copy; 2026 Nebula OS. All Rights Reserved.
+    </footer>
 
     <script>
       // Loader Logic
@@ -337,4 +358,3 @@
     </script>
   </body>
 </html>
-
